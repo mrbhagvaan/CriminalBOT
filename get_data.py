@@ -1,11 +1,10 @@
 import requests
 import os
 
-# 1. Links to English versions on Project Gutenberg
-# Jukes-Edwards (English) & Criminal Man (English)
+
 SOURCES = [
-    "https://www.gutenberg.org/files/15623/15623-0.txt", # Jukes-Edwards
-    "https://www.gutenberg.org/cache/epub/29895/pg29895.txt" # Criminal Man
+    "https://www.gutenberg.org/files/15623/15623-0.txt", 
+    "https://www.gutenberg.org/cache/epub/29895/pg29895.txt" 
 ]
 
 OLD_FILE = "inside_criminal_mind.txt"
@@ -18,10 +17,10 @@ def download_and_merge():
         print(f"[INFO] Downloading: {url}")
         try:
             response = requests.get(url)
-            response.encoding = 'utf-8' # Force UTF-8 to avoid weird symbols
+            response.encoding = 'utf-8'
             text = response.text
             
-            # Remove Gutenberg headers/footers to keep the model focused
+           
             start_marker = "*** START OF"
             end_marker = "*** END OF"
             
@@ -29,7 +28,7 @@ def download_and_merge():
             end_idx = text.find(end_marker)
             
             if start_idx != -1 and end_idx != -1:
-                # Find the actual start of the book (usually the next newline)
+               
                 actual_start = text.find("\n", start_idx + 50) 
                 text = text[actual_start:end_idx]
             
@@ -39,7 +38,7 @@ def download_and_merge():
         except Exception as e:
             print(f"[ERROR] Failed to download {url}: {e}")
 
-    # Merge with your original book
+    
     if os.path.exists(OLD_FILE):
         with open(OLD_FILE, 'r', encoding='utf-8') as f:
             original = f.read()
