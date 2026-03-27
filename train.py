@@ -30,10 +30,10 @@ if device == 'cuda':
     print(f"[INFO] VRAM: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
 
 # ── Hyperparameters (tuned for GTX 1650Ti 4GB) ────────────────────────────────
-# Medium-quality config: ~1-2 hours on 1650Ti, produces coherent sentences
+
 batch_size    = 32        # safe for 4GB VRAM
-block_size    = 128       # context window — 2x original for better conversations
-max_iters     = 8000      # enough for decent quality
+block_size    = 128       
+max_iters     = 8000    
 learning_rate = 3e-4
 eval_interval = 500
 eval_iters    = 100
@@ -95,7 +95,7 @@ with open('vocab.pkl', 'wb') as f:
     pickle.dump({'stoi': stoi, 'itos': itos, 'vocab_size': vocab_size}, f)
 print("[INFO] Vocabulary saved → vocab.pkl")
 
-# ── Data Loader ───────────────────────────────────────────────────────────────
+
 def get_batch(split):
     data = train_data if split == 'train' else val_data
     ix   = torch.randint(len(data) - block_size, (batch_size,))
@@ -103,8 +103,7 @@ def get_batch(split):
     y    = torch.stack([data[i + 1:i + block_size + 1] for i in ix])
     return x.to(device), y.to(device)
 
-# ── Model Architecture ────────────────────────────────────────────────────────
-
+# ── Model Architecture 
 class CausalSelfAttention(nn.Module):
     """
     Multi-head causal self-attention.
@@ -127,7 +126,7 @@ class CausalSelfAttention(nn.Module):
         qkv      = self.c_attn(x)
         q, k, v  = qkv.split(C, dim=2)
 
-        # Reshape: (B, T, C) → (B, n_head, T, head_dim)
+       
         q = q.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
         k = k.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
         v = v.view(B, T, self.n_head, self.head_dim).transpose(1, 2)
