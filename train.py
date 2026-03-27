@@ -1,14 +1,3 @@
-"""
-Criminal Mind GPT — Training Script
-=====================================
-Character-level GPT trained on "Inside the Criminal Mind"
-Optimized for NVIDIA GTX 1650Ti (4GB VRAM)
-
-Author  : [Your Name]
-Dataset : Inside the Criminal Mind — Stanton E. Samenow
-Model   : GPT (decoder-only transformer, character-level)
-Hardware: Tested on GTX 1650Ti 4GB
-"""
 
 import torch
 import torch.nn as nn
