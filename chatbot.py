@@ -1,7 +1,6 @@
 """
 Criminal Mind GPT — Interactive Chatbot
-=========================================
-Back-and-forth conversation interface for the trained GPT model.
+
 
 Usage:
     python chatbot.py
