@@ -7,7 +7,7 @@ import pickle
 import os
 import time
 
-# ── Device ────────────────────────────────────────────────────────────────────
+
 device = (
     'cuda' if torch.cuda.is_available()
     else 'mps' if torch.backends.mps.is_available()
@@ -18,17 +18,17 @@ if device == 'cuda':
     print(f"[INFO] GPU: {torch.cuda.get_device_name(0)}")
     print(f"[INFO] VRAM: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
 
-# ── Hyperparameters (tuned for GTX 1650Ti 4GB) ────────────────────────────────
 
-batch_size    = 32        # safe for 4GB VRAM
+
+batch_size    = 32        
 block_size    = 128       
 max_iters     = 8000    
 learning_rate = 3e-4
 eval_interval = 500
 eval_iters    = 100
-n_embd        = 256       # 2x original — richer representations
-n_head        = 8         # 8 attention heads
-n_layer       = 6         # 2x original — deeper reasoning
+n_embd        = 256       
+n_head        = 8         
+n_layer       = 6         
 dropout       = 0.15
 
 print(f"""
@@ -40,19 +40,16 @@ print(f"""
   Max iters     : {max_iters}
 """)
 
-# ── Load & Prepare Data ───────────────────────────────────────────────────────
+# ── Load & Prepare Data 
 DATA_FILE = "training_data.txt"
 
 if not os.path.exists(DATA_FILE):
     print(f"""
 [ERROR] Dataset file not found: '{DATA_FILE}'
 
-HOW TO GET THE DATA:
-  1. Find the plain-text (.txt) version of "Inside the Criminal Mind" by Stanton Samenow
-  2. Rename it to: inside_criminal_mind.txt
-  3. Place it in the same folder as this script
 
-You can also use any other .txt book file — just rename it.
+
+
 """)
     exit(1)
 
@@ -94,11 +91,8 @@ def get_batch(split):
 
 # ── Model Architecture 
 class CausalSelfAttention(nn.Module):
-    """
-    Multi-head causal self-attention.
-    Uses PyTorch's scaled_dot_product_attention which enables Flash Attention
-    automatically when CUDA is available — faster & more memory-efficient.
-    """
+    
+
     def __init__(self):
         super().__init__()
         assert n_embd % n_head == 0
@@ -127,7 +121,7 @@ class CausalSelfAttention(nn.Module):
             dropout_p  = dropout if self.training else 0.0
         )
 
-        # Reshape back: (B, n_head, T, head_dim) → (B, T, C)
+        
         out = out.transpose(1, 2).contiguous().view(B, T, C)
         out = self.c_proj(out)
         out = self.dropout(out)
@@ -135,11 +129,8 @@ class CausalSelfAttention(nn.Module):
 
 
 class FeedForward(nn.Module):
-    """
-    Position-wise feed-forward network.
-    SiLU (Swish) activation — used in LLaMA/Mistral, slightly outperforms GELU.
-    4x expansion is the standard GPT ratio.
-    """
+   
+
     def __init__(self):
         super().__init__()
         self.net = nn.Sequential(
@@ -266,8 +257,7 @@ class CriminalMindGPT(nn.Module):
 model = CriminalMindGPT().to(device)
 
 # torch.compile() requires Triton which is NOT supported on Windows.
-# Disabled to avoid TritonMissing error on GTX 1650Ti / Windows setup.
-# (On Linux this can be re-enabled for ~20-30% speedup)
+
 print("[INFO] torch.compile() skipped (Windows — Triton not supported)")
 
 
@@ -286,7 +276,7 @@ def estimate_loss():
     return out
 
 
-# AdamW with weight decay (standard for transformers)
+
 optimizer = torch.optim.AdamW(
     model.parameters(),
     lr           = learning_rate,
@@ -294,7 +284,7 @@ optimizer = torch.optim.AdamW(
     weight_decay = 0.1
 )
 
-# Cosine LR schedule with linear warmup
+# Cosine LR 
 def get_lr(step):
     warmup = 200
     min_lr = learning_rate / 10
@@ -324,7 +314,7 @@ for step in range(max_iters):
               f"train: {losses['train']:.4f} | val: {losses['val']:.4f} | "
               f"lr: {lr:.2e} | elapsed: {elapsed:.1f}m | eta: {eta:.1f}m")
 
-        # Save best model checkpoint
+        
         if losses['val'] < best_val_loss:
             best_val_loss = losses['val']
             torch.save({

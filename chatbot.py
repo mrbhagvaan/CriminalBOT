@@ -242,13 +242,13 @@ def chat(user_input: str, conv: Conversation, temperature=0.85,
     return response
 
 
-# ── CLI Interface ─────────────────────────────────────────────────────────────
+# ── CLI Interface 
 
 BANNER = """
-╔══════════════════════════════════════════════════════════╗
+╔===========================================================
 ║          CRIMINAL MIND GPT  —  Interactive Chat          ║
 ║    Trained on "Inside the Criminal Mind" — Samenow       ║
-╚══════════════════════════════════════════════════════════╝
+============================================================
 
   Type your message and press Enter to chat.
   Type /help for commands.

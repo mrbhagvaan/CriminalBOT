@@ -1,9 +1,9 @@
-# Ignore the virtual environment
+# ignore virtualenv
 venv/
 cuda/
 __pycache__/
 
-# Ignore large data files (keep your repo clean)
+# ignorebig data files
 *.txt
 *.pkl
 *.pt
